@@ -1,0 +1,44 @@
+{
+  "name": "food-delivery-awt",
+  "version": "1.0.0",
+  "description": "Multi-tenant Online Food Delivery System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "kafka-consumer": "node kafka/consumer.js",
+    "seed": "node scripts/seed.js"
+  },
+  "keywords": ["food-delivery", "multi-tenant", "kafka", "redis", "socket.io"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-jwt": "^4.0.1",
+    "helmet": "^7.0.0",
+    "cors": "^2.8.5",
+    "express-session": "^1.17.3",
+    "connect-redis": "^7.1.0",
+    "redis": "^4.6.7",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-validator": "^7.0.1",
+    "express-rate-limit": "^6.10.0",
+    "rate-limit-redis": "^3.0.2",
+    "kafkajs": "^2.2.4",
+    "socket.io": "^4.7.2",
+    "socket.io-redis": "^6.1.1",
+    "@socket.io/redis-adapter": "^8.2.1",
+    "dotenv": "^16.3.1",
+    "cookie-parser": "^1.4.6",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
+

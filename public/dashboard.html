@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Metrics Dashboard - Food Delivery System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #667eea;
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 1.1em;
+    }
+
+    .tenant-selector {
+      margin: 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .tenant-selector label {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .tenant-selector input {
+      padding: 12px 20px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1em;
+      width: 300px;
+      transition: border-color 0.3s;
+    }
+
+    .tenant-selector input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .tenant-selector button {
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .tenant-selector button:hover {
+      transform: translateY(-2px);
+    }
+
+    .status {
+      margin: 15px 0;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .status.connected {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status.disconnected {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .metric-card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .metric-card h3 {
+      color: #667eea;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+    }
+
+    .metric-value {
+      font-size: 3em;
+      font-weight: bold;
+      color: #764ba2;
+      margin: 10px 0;
+    }
+
+    .metric-label {
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .chart-container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      height: 500px;
+      position: relative;
+    }
+
+    .chart-container h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 400px;
+      width: 100%;
+    }
+
+    #ordersChart {
+      width: 100% !important;
+      height: 400px !important;
+      max-height: 400px !important;
+    }
+
+    .updates-container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .updates-container h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+    }
+
+    .update-item {
+      padding: 15px;
+      margin: 10px 0;
+      background: #f8f9fa;
+      border-left: 4px solid #667eea;
+      border-radius: 5px;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .timestamp {
+      color: #999;
+      font-size: 0.85em;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🍕 Live Metrics Dashboard</h1>
+      <p class="subtitle">Real-time Analytics for Food Delivery System</p>
+      
+      <div class="tenant-selector">
+        <label for="tenantId">Tenant ID:</label>
+        <input 
+          type="text" 
+          id="tenantId" 
+          placeholder="Enter tenant ID (e.g., restaurant UUID)"
+          value=""
+        />
+        <button id="loadDashboardBtn">Load Dashboard</button>
+      </div>
+
+      <div id="connectionStatus" class="status disconnected">
+        Disconnected
+      </div>
+    </header>
+
+    <div id="dashboardContent" style="display: none;">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <h3>📦 Total Orders</h3>
+          <div class="metric-value" id="totalOrders">0</div>
+          <div class="metric-label">All time</div>
+        </div>
+
+        <div class="metric-card">
+          <h3>⏱️ Avg Preparation Time</h3>
+          <div class="metric-value" id="avgPrepTime">0</div>
+          <div class="metric-label">Minutes</div>
+        </div>
+
+        <div class="metric-card">
+          <h3>🔥 Current Rate</h3>
+          <div class="metric-value pulse" id="currentRate">0</div>
+          <div class="metric-label">Orders/minute</div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <h2>📈 Orders Per Minute (Last 10 Minutes)</h2>
+        <div class="chart-wrapper">
+          <canvas id="ordersChart"></canvas>
+        </div>
+      </div>
+
+      <div class="updates-container">
+        <h2>🔔 Live Updates</h2>
+        <div id="liveUpdates">
+          <p class="loading">Waiting for real-time updates...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    let socket;
+    let chart;
+    let currentTenantId = null;
+    let updateCount = 0;
+
+    // Initialize Socket.IO connection
+    function initSocket() {
+      socket = io({
+        transports: ['websocket', 'polling'],
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionAttempts: 5
+      });
+
+      socket.on('connect', () => {
+        console.log('Socket.IO connected successfully');
+        updateConnectionStatus(true);
+        addLiveUpdate('Connected to real-time server', 'success');
+        
+        if (currentTenantId) {
+          console.log('Auto-joining tenant room:', currentTenantId);
+          socket.emit('join:tenant', currentTenantId);
+        }
+      });
+
+      socket.on('disconnect', () => {
+        console.log('Socket.IO disconnected');
+        updateConnectionStatus(false);
+      });
+
+      socket.on('joined', (data) => {
+        console.log('Joined room:', data);
+        addLiveUpdate(`Joined ${data.room}`, 'success');
+      });
+
+      // Listen for order updates
+      socket.on('order:created', (data) => {
+        console.log('New order:', data);
+        addLiveUpdate(`New order created: ${data.orderNumber} - $${data.total}`, 'order');
+        refreshMetrics();
+      });
+
+      socket.on('order:updated', (data) => {
+        console.log('Order updated:', data);
+        addLiveUpdate(`Order ${data.orderNumber} status: ${data.status}`, 'update');
+      });
+
+      // Listen for metrics updates
+      socket.on('metrics:update', (data) => {
+        console.log('Metrics updated:', data);
+        updateMetrics(data);
+      });
+
+      socket.on('error', (error) => {
+        console.error('Socket error:', error);
+        addLiveUpdate('Connection error occurred', 'error');
+      });
+    }
+
+    // Update connection status
+    function updateConnectionStatus(connected) {
+      const statusEl = document.getElementById('connectionStatus');
+      if (connected) {
+        statusEl.textContent = '✅ Connected - Real-time updates active';
+        statusEl.className = 'status connected';
+      } else {
+        statusEl.textContent = '❌ Disconnected - Attempting to reconnect...';
+        statusEl.className = 'status disconnected';
+      }
+    }
+
+    // Load tenant metrics
+    async function loadTenantMetrics() {
+      try {
+        const tenantId = document.getElementById('tenantId').value.trim();
+        
+        if (!tenantId) {
+          alert('Please enter a tenant ID');
+          return;
+        }
+
+        console.log('Loading dashboard for tenant:', tenantId);
+        currentTenantId = tenantId;
+        
+        // Show dashboard
+        document.getElementById('dashboardContent').style.display = 'block';
+
+        // Show loading message
+        addLiveUpdate(`Loading dashboard for tenant: ${tenantId}`, 'info');
+
+        // Join tenant room via Socket.IO
+        if (socket && socket.connected) {
+          console.log('Joining tenant room:', tenantId);
+          socket.emit('join:tenant', tenantId);
+        } else {
+          console.warn('Socket not connected, will join when connected');
+          addLiveUpdate('Connecting to real-time server...', 'info');
+        }
+
+        // Fetch initial metrics
+        await refreshMetrics();
+      } catch (error) {
+        console.error('Error loading dashboard:', error);
+        alert('Error loading dashboard: ' + error.message);
+      }
+    }
+
+    // Refresh metrics from API
+    async function refreshMetrics() {
+      if (!currentTenantId) return;
+
+      try {
+        console.log('Fetching metrics for tenant:', currentTenantId);
+        const response = await fetch(`/api/metrics/${currentTenantId}`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        console.log('Metrics response:', result);
+
+        if (result.success) {
+          updateMetrics(result.data);
+          addLiveUpdate('Metrics loaded successfully', 'success');
+        } else {
+          addLiveUpdate('No metrics data available yet', 'info');
+          // Initialize with zero data
+          updateMetrics({
+            totalOrders: 0,
+            avgPrepTime: 0,
+            ordersPerMinute: []
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching metrics:', error);
+        addLiveUpdate(`Failed to fetch metrics: ${error.message}`, 'error');
+        // Initialize with zero data even on error
+        updateMetrics({
+          totalOrders: 0,
+          avgPrepTime: 0,
+          ordersPerMinute: []
+        });
+      }
+    }
+
+    // Update metrics display
+    function updateMetrics(data) {
+      try {
+        console.log('Updating metrics display:', data);
+        
+        // Update metric cards
+        document.getElementById('totalOrders').textContent = data.totalOrders || 0;
+        document.getElementById('avgPrepTime').textContent = (data.avgPrepTime || 0).toFixed(1);
+        
+        // Calculate current rate from last minute
+        const currentRate = data.ordersPerMinute && data.ordersPerMinute.length > 0
+          ? data.ordersPerMinute[data.ordersPerMinute.length - 1].count
+          : 0;
+        document.getElementById('currentRate').textContent = currentRate;
+
+        // Update chart
+        if (data.ordersPerMinute && data.ordersPerMinute.length > 0) {
+          updateChart(data.ordersPerMinute);
+        } else {
+          // Create empty chart
+          const emptyData = [];
+          const now = new Date();
+          for (let i = 9; i >= 0; i--) {
+            const time = new Date(now - i * 60 * 1000);
+            emptyData.push({ minute: time.toISOString(), count: 0 });
+          }
+          updateChart(emptyData);
+        }
+      } catch (error) {
+        console.error('Error updating metrics display:', error);
+      }
+    }
+
+    // Initialize and update chart
+    function updateChart(ordersPerMinute) {
+      try {
+        console.log('Updating chart with data:', ordersPerMinute);
+        const ctx = document.getElementById('ordersChart').getContext('2d');
+        
+        const labels = ordersPerMinute.map(item => {
+          const date = new Date(item.minute);
+          return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        });
+
+        const data = ordersPerMinute.map(item => item.count);
+
+        if (chart) {
+          chart.data.labels = labels;
+          chart.data.datasets[0].data = data;
+          chart.update();
+        } else {
+          chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Orders Per Minute',
+                data: data,
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointBackgroundColor: '#667eea',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              aspectRatio: 2,
+              plugins: {
+                legend: {
+                  display: true,
+                  position: 'top',
+                },
+                tooltip: {
+                  mode: 'index',
+                  intersect: false,
+                }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    stepSize: 1
+                  }
+                }
+              },
+              layout: {
+                padding: {
+                  top: 10,
+                  bottom: 10
+                }
+              }
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error updating chart:', error);
+      }
+    }
+
+    // Add live update message
+    function addLiveUpdate(message, type = 'info') {
+      const updatesContainer = document.getElementById('liveUpdates');
+      
+      if (updateCount === 0) {
+        updatesContainer.innerHTML = '';
+      }
+      
+      updateCount++;
+
+      const updateItem = document.createElement('div');
+      updateItem.className = 'update-item';
+      
+      const emoji = type === 'order' ? '📦' : type === 'update' ? '🔄' : type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+      
+      updateItem.innerHTML = `
+        <strong>${emoji} ${message}</strong>
+        <div class="timestamp">${new Date().toLocaleString()}</div>
+      `;
+      
+      updatesContainer.insertBefore(updateItem, updatesContainer.firstChild);
+
+      // Keep only last 10 updates
+      while (updatesContainer.children.length > 10) {
+        updatesContainer.removeChild(updatesContainer.lastChild);
+      }
+    }
+
+    // Auto-refresh metrics every 30 seconds
+    setInterval(() => {
+      if (currentTenantId) {
+        refreshMetrics();
+      }
+    }, 30000);
+
+    // Initialize Socket.IO on page load
+    window.addEventListener('load', () => {
+      console.log('Page loaded, initializing Socket.IO...');
+      initSocket();
+      
+      // Add click event listener to Load Dashboard button
+      document.getElementById('loadDashboardBtn').addEventListener('click', loadTenantMetrics);
+      
+      // Handle Enter key in tenant ID input
+      document.getElementById('tenantId').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          loadTenantMetrics();
+        }
+      });
+    });
+
+    // Add error handler for debugging
+    window.addEventListener('error', (event) => {
+      console.error('Page error:', event.error);
+    });
+  </script>
+</body>
+</html>
+
