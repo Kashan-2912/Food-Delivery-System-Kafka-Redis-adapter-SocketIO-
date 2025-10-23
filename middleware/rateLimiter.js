@@ -7,12 +7,22 @@ exports.generalLimiter = rateLimit({
   store: new RedisStore({
     // @ts-expect-error - Known issue: the option exists, but it's not in the TypeScript definition
     sendCommand: (...args) => getRedisClient().sendCommand(args),
+    prefix: 'general_limit:',
   }),
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.',
+  windowMs: 5 * 60 * 1000, // 5 minutes (shorter window)
+  max: 1000, // limit each IP to 1000 requests per 5 minutes (very demo-friendly)
+  message: JSON.stringify({
+    success: false,
+    message: 'Too many requests, please wait a moment and try again.',
+  }),
   standardHeaders: true,
   legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: 'Too many requests, please wait a moment and try again.',
+    });
+  },
 });
 
 // Auth rate limiter (stricter for login/register)
@@ -20,12 +30,22 @@ exports.authLimiter = rateLimit({
   store: new RedisStore({
     // @ts-expect-error - Known issue: the option exists, but it's not in the TypeScript definition
     sendCommand: (...args) => getRedisClient().sendCommand(args),
+    prefix: 'auth_limit:',
   }),
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 requests per windowMs
-  message: 'Too many authentication attempts, please try again later.',
+  windowMs: 5 * 60 * 1000, // 5 minutes (shorter window for faster reset)
+  max: 100, // limit each IP to 100 requests per 5 minutes (very demo-friendly)
+  message: JSON.stringify({
+    success: false,
+    message: 'Too many authentication attempts, please wait a moment and try again.',
+  }),
   standardHeaders: true,
   legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: 'Too many authentication attempts, please wait a moment and try again.',
+    });
+  },
 });
 
 // Tenant-specific rate limiter
@@ -76,12 +96,21 @@ exports.orderLimiter = rateLimit({
     prefix: 'order_limit:',
   }),
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10, // limit to 10 orders per hour per user
-  message: 'Too many orders placed, please try again later.',
+  max: 200, // limit to 200 orders per hour per user (very demo-friendly)
+  message: JSON.stringify({
+    success: false,
+    message: 'Too many orders placed, please wait a moment.',
+  }),
   keyGenerator: (req) => {
     return req.user ? req.user._id.toString() : req.ip;
   },
   standardHeaders: true,
   legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: 'Too many orders placed, please wait a moment.',
+    });
+  },
 });
 

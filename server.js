@@ -117,85 +117,9 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Root endpoint
+// Root endpoint - Redirect to index.html
 app.get('/', (req, res) => {
-  res.send(`
-    <html>
-      <head>
-        <title>Food Delivery API</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-          }
-          .container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-          }
-          h1 { color: #333; }
-          .endpoint { 
-            background: #f9f9f9; 
-            padding: 10px; 
-            margin: 10px 0;
-            border-left: 4px solid #4CAF50;
-          }
-          a { color: #4CAF50; text-decoration: none; }
-          a:hover { text-decoration: underline; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <h1>🍕 Food Delivery API</h1>
-          <p>Welcome to the Multi-Tenant Food Delivery System API</p>
-          
-          <h2>Available Endpoints:</h2>
-          <div class="endpoint">
-            <strong>GET /health</strong> - Health check
-          </div>
-          <div class="endpoint">
-            <strong>POST /api/auth/register</strong> - Register new user
-          </div>
-          <div class="endpoint">
-            <strong>POST /api/auth/login</strong> - Login user
-          </div>
-          <div class="endpoint">
-            <strong>GET /api/auth/google</strong> - Google OAuth login
-          </div>
-          <div class="endpoint">
-            <strong>GET /api/restaurants</strong> - Get restaurants
-          </div>
-          <div class="endpoint">
-            <strong>GET /api/restaurants/:id/menu</strong> - Get restaurant menu
-          </div>
-          <div class="endpoint">
-            <strong>POST /api/orders</strong> - Create order (requires auth)
-          </div>
-          <div class="endpoint">
-            <strong>GET /api/metrics/:tenantId</strong> - Get tenant metrics
-          </div>
-          
-          <h2>Live Dashboard:</h2>
-          <p><a href="/dashboard.html">📊 Open Live Metrics Dashboard</a></p>
-          
-          <h2>Features:</h2>
-          <ul>
-            <li>✅ JWT & Google OAuth Authentication</li>
-            <li>✅ Multi-tenant architecture</li>
-            <li>✅ Redis caching & session management</li>
-            <li>✅ Rate limiting per tenant & user</li>
-            <li>✅ Kafka event streaming</li>
-            <li>✅ Real-time updates via Socket.IO</li>
-            <li>✅ Live metrics aggregation</li>
-          </ul>
-        </div>
-      </body>
-    </html>
-  `);
+  res.redirect('/index.html');
 });
 
 // 404 Handler

@@ -593,6 +593,15 @@
       console.log('Page loaded, initializing Socket.IO...');
       initSocket();
       
+      // Check for auto-load from URL parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const autoTenantId = urlParams.get('auto');
+      
+      if (autoTenantId) {
+        document.getElementById('tenantId').value = autoTenantId;
+        loadTenantMetrics();
+      }
+      
       // Add click event listener to Load Dashboard button
       document.getElementById('loadDashboardBtn').addEventListener('click', loadTenantMetrics);
       

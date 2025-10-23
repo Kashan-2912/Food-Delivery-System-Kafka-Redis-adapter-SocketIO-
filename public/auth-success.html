@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Successful - FoodExpress</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .success-container {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .success-card {
+      background: white;
+      border-radius: 20px;
+      padding: 60px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      animation: slideIn 0.5s;
+    }
+
+    .success-icon {
+      font-size: 5em;
+      margin-bottom: 20px;
+      animation: bounce 1s;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+  </style>
+</head>
+<body>
+  <div class="success-container">
+    <div class="success-card">
+      <div class="success-icon">✅</div>
+      <h1 style="color: #667eea; margin-bottom: 20px;">Login Successful!</h1>
+      <p style="color: #666; font-size: 1.2em; margin-bottom: 30px;">
+        Redirecting to your dashboard...
+      </p>
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    // Get token from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (token) {
+      // Store token
+      setToken(token);
+
+      // Fetch user info
+      fetch('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setUser(data.data);
+          setTimeout(() => {
+            redirectToDashboard(data.data);
+          }, 2000);
+        } else {
+          window.location.href = '/login.html';
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        window.location.href = '/login.html';
+      });
+    } else {
+      window.location.href = '/login.html';
+    }
+  </script>
+</body>
+</html>
+

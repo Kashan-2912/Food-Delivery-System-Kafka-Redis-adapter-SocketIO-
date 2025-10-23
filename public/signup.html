@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - FoodExpress</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .signup-container {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 20px;
+    }
+
+    .signup-card {
+      background: white;
+      border-radius: 20px;
+      padding: 50px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      width: 100%;
+      animation: slideIn 0.5s;
+    }
+
+    .signup-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .signup-header h1 {
+      color: #667eea;
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    .signup-header p {
+      color: #666;
+      font-size: 1.1em;
+    }
+
+    .role-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .role-option {
+      padding: 20px;
+      border: 3px solid #ddd;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .role-option:hover {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+
+    .role-option.active {
+      border-color: #667eea;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .role-option .icon {
+      font-size: 3em;
+      margin-bottom: 10px;
+    }
+
+    .role-option .label {
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 30px 0;
+      color: #999;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .divider span {
+      padding: 0 15px;
+    }
+
+    .google-btn {
+      width: 100%;
+      padding: 12px;
+      background: white;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s;
+      text-decoration: none;
+      color: #333;
+    }
+
+    .google-btn:hover {
+      border-color: #667eea;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 30px;
+      color: #666;
+    }
+
+    .login-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <div class="signup-card">
+      <div class="signup-header">
+        <h1>🍕 FoodExpress</h1>
+        <p>Create your account and start ordering!</p>
+      </div>
+
+      <div id="alert" class="alert hidden"></div>
+
+      <div class="role-selector">
+        <div class="role-option active" data-role="customer">
+          <div class="icon">👤</div>
+          <div class="label">Customer</div>
+          <div style="font-size: 0.9em; margin-top: 5px;">Order food</div>
+        </div>
+        <div class="role-option" data-role="restaurant">
+          <div class="icon">🏪</div>
+          <div class="label">Restaurant</div>
+          <div style="font-size: 0.9em; margin-top: 5px;">Sell food</div>
+        </div>
+      </div>
+
+      <form id="signupForm">
+        <input type="hidden" id="role" value="customer">
+
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input 
+            type="text" 
+            id="name" 
+            class="form-control" 
+            placeholder="Enter your full name"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input 
+            type="email" 
+            id="email" 
+            class="form-control" 
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            class="form-control" 
+            placeholder="Create a password (min. 6 characters)"
+            required
+            minlength="6"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number (Optional)</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            class="form-control" 
+            placeholder="Enter your phone number"
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+          Create Account
+        </button>
+      </form>
+
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <a href="/api/auth/google" class="google-btn">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <path fill="#4285F4" d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z"/>
+          <path fill="#34A853" d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z"/>
+          <path fill="#FBBC05" d="M3.99 10c0-.69.12-1.35.32-1.97V5.51H1.07A9.973 9.973 0 0 0 0 10c0 1.61.39 3.14 1.07 4.49l3.24-2.52c-.2-.62-.32-1.28-.32-1.97z"/>
+          <path fill="#EA4335" d="M10 3.88c1.88 0 3.13.81 3.85 1.48l2.84-2.76C14.96.99 12.7 0 10 0 6.09 0 2.72 2.25 1.07 5.51l3.24 2.52C5.12 5.62 7.36 3.88 10 3.88z"/>
+        </svg>
+        Sign up with Google
+      </a>
+
+      <div class="login-link">
+        Already have an account? <a href="/login.html">Login here</a>
+      </div>
+
+      <div class="login-link" style="margin-top: 15px;">
+        <a href="/index.html">← Back to Home</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    // Check if already logged in
+    if (isAuthenticated()) {
+      const user = getUser();
+      redirectToDashboard(user);
+    }
+
+    // Role selection
+    const roleOptions = document.querySelectorAll('.role-option');
+    const roleInput = document.getElementById('role');
+
+    roleOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        roleOptions.forEach(opt => opt.classList.remove('active'));
+        option.classList.add('active');
+        roleInput.value = option.dataset.role;
+      });
+    });
+
+    // Form submission
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const phone = document.getElementById('phone').value;
+      const role = document.getElementById('role').value;
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      
+      try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating account...';
+        
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, email, password, phone, role }),
+        });
+
+        // Handle rate limit error (plain text response)
+        if (response.status === 429) {
+          const text = await response.text();
+          showAlert(text || 'Too many requests. Please wait a moment and try again.', 'error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Account';
+          return;
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Store token and user info
+          setToken(data.token);
+          setUser(data.user);
+          
+          showAlert('Account created successfully! Redirecting...', 'success');
+          
+          // Redirect based on role
+          setTimeout(() => {
+            redirectToDashboard(data.user);
+          }, 1500);
+        } else {
+          showAlert(data.message || 'Registration failed', 'error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Account';
+        }
+      } catch (error) {
+        console.error('Signup error:', error);
+        showAlert('An error occurred. Please try again.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create Account';
+      }
+    });
+  </script>
+</body>
+</html>
+

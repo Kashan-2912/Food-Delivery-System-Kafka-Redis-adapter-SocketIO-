@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodExpress - Online Food Delivery</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 100px 20px;
+      text-align: center;
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero h1 {
+      font-size: 4em;
+      margin-bottom: 20px;
+      animation: fadeInDown 1s;
+    }
+
+    .hero p {
+      font-size: 1.5em;
+      margin-bottom: 40px;
+      opacity: 0.9;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 15px 40px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s;
+      font-weight: bold;
+    }
+
+    .btn-primary {
+      background: white;
+      color: #667eea;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      border: 3px solid white;
+    }
+
+    .btn-secondary:hover {
+      background: white;
+      color: #667eea;
+      transform: translateY(-3px);
+    }
+
+    .features {
+      padding: 80px 20px;
+      background: #f8f9fa;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .feature-icon {
+      font-size: 4em;
+      margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+      color: #667eea;
+      margin-bottom: 15px;
+      font-size: 1.5em;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <div class="hero">
+    <h1>🍕 FoodExpress</h1>
+    <p>Delicious food delivered to your doorstep</p>
+    <div class="cta-buttons">
+      <a href="/login.html" class="btn btn-primary">Login</a>
+      <a href="/signup.html" class="btn btn-secondary">Sign Up</a>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="features">
+    <h2 style="text-align: center; font-size: 2.5em; margin-bottom: 60px; color: #333;">Why Choose FoodExpress?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h3>Fast Delivery</h3>
+        <p>Get your food delivered in 30 minutes or less</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">🍔</div>
+        <h3>Wide Selection</h3>
+        <p>Choose from hundreds of restaurants and cuisines</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">💳</div>
+        <h3>Secure Payments</h3>
+        <p>Multiple payment options with secure checkout</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>Real-time Tracking</h3>
+        <p>Track your order from kitchen to doorstep</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">⭐</div>
+        <h3>Top Rated</h3>
+        <p>Quality restaurants with verified reviews</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">🎉</div>
+        <h3>Special Offers</h3>
+        <p>Daily deals and exclusive discounts</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="background: #333; color: white; padding: 40px 20px; text-align: center;">
+    <p>&copy; 2024 FoodExpress. All rights reserved.</p>
+    <p style="margin-top: 10px; opacity: 0.8;">
+      <a href="/login.html" style="color: white; margin: 0 10px;">Login</a> | 
+      <a href="/signup.html" style="color: white; margin: 0 10px;">Sign Up</a> | 
+      <a href="/dashboard.html" style="color: white; margin: 0 10px;">Metrics Dashboard</a>
+    </p>
+  </div>
+</body>
+</html>
+
