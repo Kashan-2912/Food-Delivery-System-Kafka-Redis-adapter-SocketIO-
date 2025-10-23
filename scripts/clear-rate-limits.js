@@ -1,18 +1,13 @@
 require('dotenv').config();
-const { createClient } = require('redis');
+const { connectRedis, getRedisClient } = require('../config/redis');
 
 // Script to clear all rate limit data from Redis
 async function clearRateLimits() {
-  const redisClient = createClient({
-    socket: {
-      host: process.env.REDIS_HOST || 'localhost',
-      port: process.env.REDIS_PORT || 6379,
-    },
-    password: process.env.REDIS_PASSWORD || undefined,
-  });
-
   try {
-    await redisClient.connect();
+    // Use existing Redis configuration
+    await connectRedis();
+    const redisClient = getRedisClient();
+    
     console.log('Connected to Redis');
 
     // Clear all rate limit keys
@@ -25,23 +20,27 @@ async function clearRateLimits() {
       'user_limit:*',      // user rate limiter
     ];
 
+    let totalKeysDeleted = 0;
+
     for (const pattern of patterns) {
       const keys = await redisClient.keys(pattern);
       if (keys.length > 0) {
         console.log(`Deleting ${keys.length} keys matching ${pattern}...`);
         await redisClient.del(keys);
+        totalKeysDeleted += keys.length;
       } else {
         console.log(`No keys found for pattern: ${pattern}`);
       }
     }
 
-    console.log('✅ All rate limit data cleared!');
-    console.log('You can now test without rate limit restrictions.');
+    console.log('\n✅ Rate limit cleanup complete!');
+    console.log(`📊 Total keys deleted: ${totalKeysDeleted}`);
+    console.log('🚀 You can now test without rate limit restrictions.');
     
     await redisClient.quit();
     process.exit(0);
   } catch (error) {
-    console.error('Error clearing rate limits:', error);
+    console.error('❌ Error clearing rate limits:', error.message);
     process.exit(1);
   }
 }
